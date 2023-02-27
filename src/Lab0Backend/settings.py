@@ -14,6 +14,9 @@ from pathlib import Path
 import environ
 import os
 
+from django.db.backends.mysql.base import DatabaseWrapper
+DatabaseWrapper.data_types['DateTimeField'] = 'datetime' # fix for MySQL 5.5
+
 # Read env data
 env = environ.Env()
 
@@ -30,6 +33,9 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Allow requests which doesn't end with /
+APPEND_SLASH=False
+
 ALLOWED_HOSTS = []
 
 
@@ -42,6 +48,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'core.apps.CoreConfig',
+    "rest_framework"
 ]
 
 MIDDLEWARE = [
