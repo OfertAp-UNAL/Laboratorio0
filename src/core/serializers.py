@@ -19,7 +19,7 @@ class BasePersonSerializer( serializers.ModelSerializer ):
         fields = '__all__'
 
 class HouseSerializer( BaseHouseSerializer ):
-    town = BaseHouseSerializer( many=False, read_only=True )
+    town = BaseTownSerializer( many=False, read_only=True )
     residents = BasePersonSerializer( many=True, read_only=True )
     owners = BasePersonSerializer( many=True, read_only=True )
     
