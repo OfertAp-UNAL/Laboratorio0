@@ -7,6 +7,18 @@ import sys
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Lab0Backend.settings')
+
+    # start new section
+    from django.conf import settings
+
+    if settings.DEBUG:
+        if os.environ.get('RUN_MAIN') or os.environ.get('WERKZEUG_RUN_MAIN'):
+            pass
+            #import debugpy
+            #debugpy.listen(("127.0.0.1", 8000))
+            #print('Attached!')
+    # end new section
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

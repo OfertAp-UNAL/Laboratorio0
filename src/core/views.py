@@ -9,8 +9,13 @@ class TownView( APIView ):
     def get( self, _, id = None, format=None ):
 
         if id is not None:
-            municipio = Town.objects.get( id=id )
-            serializer = TownSerializer( municipio )
+            
+            try:
+                town = Town.objects.get( id=id )
+            except Town.DoesNotExist:
+                return Response( status=status.HTTP_404_NOT_FOUND )
+            
+            serializer = TownSerializer( town )
             return Response( serializer.data, status=status.HTTP_200_OK )
         
         municipios = Town.objects.all()
@@ -31,32 +36,55 @@ class TownView( APIView ):
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
-    def delete( self, id ):
-        municipio = Town.objects.get( id=id )
-        municipio.delete()
+    def delete( self, request, id, format = None ):
+        try:
+            town = Town.objects.get( id=id )
+        except Town.DoesNotExist:
+            return Response( status=status.HTTP_404_NOT_FOUND )
+        
+        town.delete()
         return Response( status=status.HTTP_204_NO_CONTENT )
 
     def put( self, request, id ):
-        municipio = Town.objects.get( id=id )
+        
+        try:
+            town = Town.objects.get( id=id )
+        except Town.DoesNotExist:
+            return Response( status=status.HTTP_404_NOT_FOUND )
+        
         data = {
             'name': request.data.get('name'),
             'area': request.data.get('area'),
             'budget': request.data.get('budget'),
         }
-        serializer = TownSerializer( municipio, data=data )
+        serializer = TownSerializer( town, data=data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
-class HouseView( APIView ):
+class TownHousesView( APIView ):
         
     def get( self, _, id = None, format=None ):
-
         if id is not None:
-            vivienda = House.objects.get( id=id )
-            serializer = HouseSerializer( vivienda )
+            houses = House.objects.filter( town=id )
+            serializer = BaseHouseSerializer( houses, many=True )
+            return Response( serializer.data, status=status.HTTP_200_OK )
+        
+        return Response( status=status.HTTP_400_BAD_REQUEST )
+        
+class HouseView( APIView ):
+        
+    def get( self, request, id = None, format=None ):
+        if id is not None:
+            
+            try:
+                house = House.objects.get( id=id )
+            except House.DoesNotExist:
+                return Response( status=status.HTTP_404_NOT_FOUND )
+    
+            serializer = HouseSerializer( house )
             return Response( serializer.data, status=status.HTTP_200_OK )
         
         viviendas = House.objects.all()
@@ -78,37 +106,87 @@ class HouseView( APIView ):
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
     
-    def delete( self, id ):
-        vivienda = House.objects.get( id=id )
-        vivienda.delete()
+    def delete( self, request, id=None, format=None ):
+        print(id)
+        try:
+            house = House.objects.get( id=id )
+        except House.DoesNotExist:
+            return Response( status=status.HTTP_404_NOT_FOUND )
+        
+        house.delete()
+        
+        #house.save()
         return Response( status=status.HTTP_204_NO_CONTENT )
     
     def put( self, request, id ):
-        vivienda = House.objects.get( id=id )
+        
+        try:
+            house = House.objects.get( id=id )
+        except House.DoesNotExist:
+            return Response( status=status.HTTP_404_NOT_FOUND )
+        
         data = {
             'address': request.data.get('address'),
             'capacity': request.data.get('capacity'),
             'levels': request.data.get('levels'),
             'town': request.data.get('town'),
         }
-        serializer = BaseHouseSerializer( vivienda, data=data )
+
+        serializer = BaseHouseSerializer( house, data=data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
+class HouseResidentsView( APIView ):
+            
+    def get( self, _, id = None, format=None ):
+        if id is not None:
+            residentes = Person.objects.filter( home=id )
+            serializer = BasePersonSerializer( residentes, many=True )
+            return Response( serializer.data, status=status.HTTP_200_OK )
+        
+        return Response( status=status.HTTP_400_BAD_REQUEST )
+
+class HouseOwnersView( APIView ):
+    
+    def get( self, _, id = None, format=None ):
+        
+        if id is not None:
+
+            try:
+                house = House.objects.get( id=id )
+            except House.DoesNotExist:
+                return Response( status=status.HTTP_404_NOT_FOUND )
+
+            serializer = None
+
+            if house:
+                serializer = BasePersonSerializer( house.owners.all(), many=True )
+            else:
+                serializer = BasePersonSerializer( [], many=True )
+
+            return Response( serializer.data, status=status.HTTP_200_OK )
+            
+        return Response( status=status.HTTP_400_BAD_REQUEST )
+
 class PersonView( APIView ):
             
     def get( self, _, id = None, format=None ):
 
         if id is not None:
-            persona = Person.objects.get( id=id )
-            serializer = PersonSerializer( persona )
+            
+            try:
+                person = Person.objects.get( id=id )
+            except Person.DoesNotExist:
+                return Response( status=status.HTTP_404_NOT_FOUND )
+            
+            serializer = PersonSerializer( person )
             return Response( serializer.data, status=status.HTTP_200_OK )
         
-        personas = Person.objects.all()
-        serializer = PersonSerializer( personas, many=True )
+        people = Person.objects.all()
+        serializer = PersonSerializer( people, many=True )
         return Response( serializer.data, status=status.HTTP_200_OK )
     
     def post( self, request, format=None ):
@@ -130,12 +208,22 @@ class PersonView( APIView ):
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
     
     def delete( self, id ):
-        persona = Person.objects.get( id=id )
-        persona.delete()
+
+        try:
+            person = Person.objects.get( id=id )
+        except Person.DoesNotExist:
+            return Response( status=status.HTTP_404_NOT_FOUND )
+        
+        person.delete()
         return Response( status=status.HTTP_204_NO_CONTENT )
     
     def put( self, request, id ):
-        persona = Person.objects.get( id=id )
+        
+        try:
+            person = Person.objects.get( id=id )
+        except Person.DoesNotExist:
+            return Response( status=status.HTTP_404_NOT_FOUND )
+        
         data = {
             'id' : request.data.get('id'),
             'age': request.data.get('age'),
@@ -145,7 +233,7 @@ class PersonView( APIView ):
             'home': request.data.get('home'),
             'depends_on': request.data.get('depends_on'),
         }
-        serializer = PersonSerializer( persona, data=data )
+        serializer = PersonSerializer( person, data=data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
@@ -153,13 +241,49 @@ class PersonView( APIView ):
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
     def patch( self, request, id ):
-        persona = Person.objects.get( id=id )
+        
+        try:
+            person = Person.objects.get( id=id )
+        except Person.DoesNotExist:
+            return Response( status=status.HTTP_404_NOT_FOUND )
+        
         data = {
             'houses' : request.data.get('houses'),
         }
-        serializer = BasePersonSerializer( persona, data=data, partial=True )
+        serializer = BasePersonSerializer( person, data=data, partial=True )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
+
+class PersonHousesView( APIView ):
+            
+    def get( self, _, id = None, format=None ):
+        if id is not None:
+
+            try:
+                person = Person.objects.get( id=id )
+            except Person.DoesNotExist:
+                return Response( status=status.HTTP_404_NOT_FOUND )
+            
+            serializer = None
+
+            if person:
+                serializer = BaseHouseSerializer( person.houses.all(), many=True )
+            else:
+                serializer = BaseHouseSerializer( [], many=True )
+
+            return Response( serializer.data, status=status.HTTP_200_OK )
+        
+        return Response( status=status.HTTP_400_BAD_REQUEST )
+
+class PersonDependencesView( APIView ):
+            
+    def get( self, _, id = None, format=None ):
+        if id is not None:
+            dependences = Person.objects.filter( depends_on=id )
+            serializer = BasePersonSerializer( dependences, many=True )
+            return Response( serializer.data, status=status.HTTP_200_OK )
+        
+        return Response( status=status.HTTP_400_BAD_REQUEST )

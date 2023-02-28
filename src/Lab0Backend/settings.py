@@ -34,10 +34,9 @@ SECRET_KEY = env("SECRET_KEY")
 DEBUG = True
 
 # Allow requests which doesn't end with /
-APPEND_SLASH=False
+APPEND_SLASH = False
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 

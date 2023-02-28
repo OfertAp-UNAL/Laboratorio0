@@ -38,9 +38,9 @@ class TownSerializer( BaseTownSerializer ):
 class PersonSerializer( BasePersonSerializer ):
     houses = BaseHouseSerializer( many=True, read_only=True )
     dependences = BasePersonSerializer( many=True, read_only=True )
-    dependiente = BasePersonSerializer( many=False, read_only=True )
+    depends_on = BasePersonSerializer( many=False, read_only=True )
     home = BaseHouseSerializer( many=False, read_only=True )
-    municipio_gobernado = BaseTownSerializer( many=False, read_only=True )
+    governed_town = BaseTownSerializer( many=False, read_only=True )
 
     class Meta:
         model = Person
