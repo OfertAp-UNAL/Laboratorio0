@@ -4,7 +4,7 @@ from rest_framework import status, permissions
 from .models import *
 from .serializers import *
 
-class MunicipioView( APIView ):
+class TownView( APIView ):
     
     def get( self, _, id = None, format=None ):
 
@@ -50,7 +50,7 @@ class MunicipioView( APIView ):
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
-class ViviendaView( APIView ):
+class HouseView( APIView ):
         
     def get( self, _, id = None, format=None ):
 
@@ -98,7 +98,7 @@ class ViviendaView( APIView ):
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
-class PersonaView( APIView ):
+class PersonView( APIView ):
             
     def get( self, _, id = None, format=None ):
 
@@ -119,7 +119,7 @@ class PersonaView( APIView ):
             'phone': request.data.get('phone'),
             'gender': request.data.get('gender'),
             'home': request.data.get('home'),
-            'depends_on': request.data.get('depends_on'),
+            'depends_on': request.data.get('depends_on')
         }
 
         serializer = PersonSerializer( data = data )
@@ -146,6 +146,18 @@ class PersonaView( APIView ):
             'depends_on': request.data.get('depends_on'),
         }
         serializer = PersonSerializer( persona, data=data )
+        if serializer.is_valid():
+            serializer.save()
+            return Response( serializer.data, status=status.HTTP_200_OK )
+        
+        return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
+
+    def patch( self, request, id ):
+        persona = Person.objects.get( id=id )
+        data = {
+            'houses' : request.data.get('houses'),
+        }
+        serializer = BasePersonSerializer( persona, data=data, partial=True )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
