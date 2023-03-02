@@ -207,7 +207,7 @@ class PersonView( APIView ):
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
     
-    def delete( self, id ):
+    def delete( self, request, id ):
 
         try:
             person = Person.objects.get( id=id )
