@@ -64,6 +64,20 @@ class TownView( APIView ):
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
+    def patch( self, request, id ):
+        
+        try:
+            person = Town.objects.get( id=id )
+        except Town.DoesNotExist:
+            return Response( status=status.HTTP_404_NOT_FOUND )
+        
+        serializer = BaseTownSerializer( person, data = request.data, partial=True )
+        if serializer.is_valid():
+            serializer.save()
+            return Response( serializer.data, status=status.HTTP_200_OK )
+        
+        return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
+
 class TownHousesView( APIView ):
         
     def get( self, _, id = None, format=None ):
@@ -133,6 +147,20 @@ class HouseView( APIView ):
         }
 
         serializer = BaseHouseSerializer( house, data=data )
+        if serializer.is_valid():
+            serializer.save()
+            return Response( serializer.data, status=status.HTTP_200_OK )
+        
+        return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
+    
+    def patch( self, request, id ):
+        
+        try:
+            person = House.objects.get( id=id )
+        except House.DoesNotExist:
+            return Response( status=status.HTTP_404_NOT_FOUND )
+        
+        serializer = BaseHouseSerializer( person, data = request.data, partial=True )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
@@ -232,6 +260,7 @@ class PersonView( APIView ):
             'gender': request.data.get('gender'),
             'home': request.data.get('home'),
             'depends_on': request.data.get('depends_on'),
+            'houses': request.data.get('houses')
         }
         serializer = PersonSerializer( person, data=data )
         if serializer.is_valid():
@@ -247,10 +276,7 @@ class PersonView( APIView ):
         except Person.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        data = {
-            'houses' : request.data.get('houses'),
-        }
-        serializer = BasePersonSerializer( person, data=data, partial=True )
+        serializer = BasePersonSerializer( person, data = request.data, partial=True )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
