@@ -14,6 +14,9 @@ from pathlib import Path
 import environ
 import os
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 from django.db.backends.mysql.base import DatabaseWrapper
 DatabaseWrapper.data_types['DateTimeField'] = 'datetime' # fix for MySQL 5.5
 
