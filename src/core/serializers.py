@@ -18,6 +18,24 @@ class BasePersonSerializer( serializers.ModelSerializer ):
         model = Person
         fields = '__all__'
 
+class HouseOwnersSerializer( BaseHouseSerializer ):
+    owners = serializers.ListField(
+        child = serializers.IntegerField(),
+        write_only=True,
+        required=False
+    )
+
+    class Meta:
+        model = House
+        fields = '__all__'
+
+    def create( self, validated_data ):
+        owners = validated_data.pop( 'owners', [])
+        print( owners )
+        house = House.objects.create( **validated_data )
+        house.owners.set( owners )
+        return house
+
 class HouseSerializer( BaseHouseSerializer ):
     town = BaseTownSerializer( many=False, read_only=True )
     residents = BasePersonSerializer( many=True, read_only=True )

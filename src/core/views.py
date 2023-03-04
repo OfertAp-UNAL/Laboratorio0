@@ -111,9 +111,10 @@ class HouseView( APIView ):
             'capacity': request.data.get('capacity'),
             'levels': request.data.get('levels'),
             'town': request.data.get('town'),
+            'owners' : request.data.get('owners')
         }
 
-        serializer = BaseHouseSerializer( data = data )
+        serializer = HouseOwnersSerializer( data = data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_201_CREATED )
@@ -160,7 +161,7 @@ class HouseView( APIView ):
         except House.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        serializer = BaseHouseSerializer( person, data = request.data, partial=True )
+        serializer = HouseOwnersSerializer( person, data = request.data, partial=True )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
