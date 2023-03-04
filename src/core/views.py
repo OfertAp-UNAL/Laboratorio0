@@ -226,10 +226,11 @@ class PersonView( APIView ):
             'phone': request.data.get('phone'),
             'gender': request.data.get('gender'),
             'home': request.data.get('home'),
+            'houses' : request.data.get('houses'),
             'depends_on': request.data.get('depends_on')
         }
 
-        serializer = PersonSerializer( data = data )
+        serializer = PersonHousesSerializer( data = data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_201_CREATED )
@@ -263,7 +264,7 @@ class PersonView( APIView ):
             'depends_on': request.data.get('depends_on'),
             'houses': request.data.get('houses')
         }
-        serializer = PersonSerializer( person, data=data )
+        serializer = PersonHousesSerializer( person, data=data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )

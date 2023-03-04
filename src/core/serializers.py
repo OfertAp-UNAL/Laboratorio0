@@ -22,7 +22,8 @@ class HouseOwnersSerializer( BaseHouseSerializer ):
     owners = serializers.ListField(
         child = serializers.IntegerField(),
         write_only=True,
-        required=False
+        required=False,
+        allow_null=True
     )
 
     class Meta:
@@ -31,9 +32,12 @@ class HouseOwnersSerializer( BaseHouseSerializer ):
 
     def create( self, validated_data ):
         owners = validated_data.pop( 'owners', [])
-        print( owners )
+        
         house = House.objects.create( **validated_data )
-        house.owners.set( owners )
+
+        if owners is not None:
+            house.owners.set( owners )
+
         return house
 
 class HouseSerializer( BaseHouseSerializer ):
@@ -52,6 +56,28 @@ class TownSerializer( BaseTownSerializer ):
     class Meta:
         model = Town
         fields = '__all__'
+
+class PersonHousesSerializer( serializers.ModelSerializer ):
+    houses = serializers.ListField(
+        child = serializers.IntegerField(),
+        write_only=True,
+        required=False,
+        allow_null=True
+    )
+
+    class Meta:
+        model = Person
+        fields = '__all__'
+
+    def create( self, validated_data ):
+        houses = validated_data.pop( 'houses', [])
+        
+        person = Person.objects.create( **validated_data )
+
+        if houses is not None:
+            person.houses.set( houses )
+
+        return person
 
 class PersonSerializer( BasePersonSerializer ):
     houses = BaseHouseSerializer( many=True, read_only=True )
