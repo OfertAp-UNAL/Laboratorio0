@@ -34,12 +34,14 @@ environ.Env.read_env( os.path.join(BASE_DIR, "./../.env") )
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG", default=False, cast=bool)
 
 # Allow requests which doesn't end with /
 APPEND_SLASH = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+]
 
 # Application definition
 
