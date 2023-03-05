@@ -30,10 +30,13 @@ class TownView( APIView ):
             'governor': request.data.get('governor'),
         }
 
-        serializer = TownSetSerializer( data = data )
-        if serializer.is_valid():
-            serializer.save()
-            return Response( serializer.data, status=status.HTTP_201_CREATED )
+        try:
+            serializer = TownSetSerializer( data = data )
+            if serializer.is_valid():
+                serializer.save()
+                return Response( serializer.data, status=status.HTTP_201_CREATED )
+        except Exception as e:
+            print(e)
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
@@ -43,7 +46,11 @@ class TownView( APIView ):
         except Town.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        town.delete()
+        try:
+            town.delete()
+        except Exception as e:
+            print(e)
+        
         return Response( status=status.HTTP_204_NO_CONTENT )
 
     def put( self, request, id ):
@@ -60,10 +67,13 @@ class TownView( APIView ):
             'governor': request.data.get('governor'),
         }
         
-        serializer = TownSetSerializer( town, data=data )
-        if serializer.is_valid():
-            serializer.save()
-            return Response( serializer.data, status=status.HTTP_200_OK )
+        try:
+            serializer = TownSetSerializer( town, data=data )
+            if serializer.is_valid():
+                serializer.save()
+                return Response( serializer.data, status=status.HTTP_200_OK )
+        except Exception as e:
+            print(e)
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
@@ -74,10 +84,14 @@ class TownView( APIView ):
         except Town.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        serializer = TownSetSerializer( person, data = request.data, partial=True )
-        if serializer.is_valid():
-            serializer.save()
-            return Response( serializer.data, status=status.HTTP_200_OK )
+        try:
+            serializer = TownSetSerializer( person, data = request.data, partial=True )
+            if serializer.is_valid():
+                serializer.save()
+                return Response( serializer.data, status=status.HTTP_200_OK )
+        
+        except Exception as e:
+            print(e)
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
@@ -117,10 +131,14 @@ class HouseView( APIView ):
             'owners' : request.data.get('owners')
         }
 
-        serializer = HouseSetSerializer( data = data )
-        if serializer.is_valid():
-            serializer.save()
-            return Response( serializer.data, status=status.HTTP_201_CREATED )
+        try:
+            serializer = HouseSetSerializer( data = data )
+            if serializer.is_valid():
+                serializer.save()
+                return Response( serializer.data, status=status.HTTP_201_CREATED )
+
+        except Exception as e:
+            print(e)
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
     
@@ -131,9 +149,11 @@ class HouseView( APIView ):
         except House.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        house.delete()
+        try:
+            house.delete()
+        except Exception as e:
+            print(e)
         
-        #house.save()
         return Response( status=status.HTTP_204_NO_CONTENT )
     
     def put( self, request, id ):
@@ -151,10 +171,13 @@ class HouseView( APIView ):
             'owners' : request.data.get('owners')
         }
 
-        serializer = HouseSetSerializer( house, data=data )
-        if serializer.is_valid():
-            serializer.save()
-            return Response( serializer.data, status=status.HTTP_200_OK )
+        try:
+            serializer = HouseSetSerializer( house, data=data )
+            if serializer.is_valid():
+                serializer.save()
+                return Response( serializer.data, status=status.HTTP_200_OK )
+        except Exception as e:
+            print(e)
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
     
@@ -165,10 +188,13 @@ class HouseView( APIView ):
         except House.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        serializer = HouseSetSerializer( person, data = request.data, partial=True )
-        if serializer.is_valid():
-            serializer.save()
-            return Response( serializer.data, status=status.HTTP_200_OK )
+        try:
+            serializer = HouseSetSerializer( person, data = request.data, partial=True )
+            if serializer.is_valid():
+                serializer.save()
+                return Response( serializer.data, status=status.HTTP_200_OK )
+        except Exception as e:
+            print(e)
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
@@ -234,10 +260,13 @@ class PersonView( APIView ):
             'depends_on': request.data.get('depends_on')
         }
 
-        serializer = PersonSetSerializer( data = data )
-        if serializer.is_valid():
-            serializer.save()
-            return Response( serializer.data, status=status.HTTP_201_CREATED )
+        try:
+            serializer = PersonSetSerializer( data = data )
+            if serializer.is_valid():
+                serializer.save()
+                return Response( serializer.data, status=status.HTTP_201_CREATED )
+        except Exception as e:
+            print(e)
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
     
@@ -248,7 +277,11 @@ class PersonView( APIView ):
         except Person.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        person.delete()
+        try:
+            person.delete()
+        except Exception as e:
+            print(e)
+
         return Response( status=status.HTTP_204_NO_CONTENT )
     
     def put( self, request, id ):
@@ -268,10 +301,15 @@ class PersonView( APIView ):
             'depends_on': request.data.get('depends_on'),
             'houses': request.data.get('houses')
         }
-        serializer = PersonSetSerializer( person, data=data )
-        if serializer.is_valid():
-            serializer.save()
-            return Response( serializer.data, status=status.HTTP_200_OK )
+
+        try:
+            serializer = PersonSetSerializer( person, data=data )
+            if serializer.is_valid():
+                serializer.save()
+                return Response( serializer.data, status=status.HTTP_200_OK )
+            
+        except Exception as e:
+            print(e)
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 
@@ -282,10 +320,13 @@ class PersonView( APIView ):
         except Person.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        serializer = PersonSetSerializer( person, data = request.data, partial=True )
-        if serializer.is_valid():
-            serializer.save()
-            return Response( serializer.data, status=status.HTTP_200_OK )
+        try:
+            serializer = PersonSetSerializer( person, data = request.data, partial=True )
+            if serializer.is_valid():
+                serializer.save()
+                return Response( serializer.data, status=status.HTTP_200_OK )
+        except Exception as e:
+            print(e)
         
         return Response( serializer.errors, status=status.HTTP_400_BAD_REQUEST )
 

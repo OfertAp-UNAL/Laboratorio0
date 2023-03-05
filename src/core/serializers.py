@@ -46,7 +46,6 @@ class HouseSetSerializer( BaseHouseSerializer ):
             instance.owners.set( owners )
 
         super().update( instance, validated_data )
-        print( instance.owners )
         return instance
 
 class HouseSerializer( BaseHouseSerializer ):
