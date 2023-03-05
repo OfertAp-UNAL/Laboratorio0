@@ -28,6 +28,7 @@ class TownView( APIView ):
             'area': request.data.get('area'),
             'budget': request.data.get('budget'),
             'governor': request.data.get('governor'),
+            'houses' : request.data.get('houses'),
         }
 
         try:
@@ -65,6 +66,7 @@ class TownView( APIView ):
             'area': request.data.get('area'),
             'budget': request.data.get('budget'),
             'governor': request.data.get('governor'),
+            'houses' : request.data.get('houses'),
         }
         
         try:

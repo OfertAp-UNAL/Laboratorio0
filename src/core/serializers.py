@@ -75,6 +75,12 @@ class TownSetSerializer( serializers.ModelSerializer ):
         required=False,
         allow_null=True
     )
+    houses = serializers.ListField(
+        child = serializers.IntegerField(),
+        write_only=True,
+        required=False,
+        allow_null=True
+    )
 
     class Meta:
         model = Town
@@ -82,6 +88,7 @@ class TownSetSerializer( serializers.ModelSerializer ):
 
     def create( self, validated_data ):
         governor_id = validated_data.pop( 'governor', None)
+        houses = validated_data.pop( 'houses', [])
         town = Town.objects.create( **validated_data )
 
         if governor_id is not None:
@@ -90,11 +97,18 @@ class TownSetSerializer( serializers.ModelSerializer ):
                 town.governor = governor_person
             except Person.DoesNotExist:
                 pass
+        else:
+            town.governor = None
+        
+        houses_objs = [ House.objects.get( id=house_id ) for house_id in houses ]
 
+        # Reassign array of houses (old ones will remain around here)
+        town.houses.set( houses_objs )
         return town
 
     def update( self, instance, validated_data ):
         governor_id = validated_data.pop( 'governor', None)
+        houses = validated_data.pop( 'houses', [])
 
         if governor_id is not None:
             try:
@@ -102,6 +116,14 @@ class TownSetSerializer( serializers.ModelSerializer ):
                 instance.governor = governor_person
             except Person.DoesNotExist:
                 pass
+        else:
+            instance.governor = None
+        
+        houses_objs = [ House.objects.get( id=house_id ) for house_id in houses ]
+
+        # Reassign array of houses (old ones will remain around here)
+        instance.houses.set( houses_objs )
+
         super().update( instance, validated_data )
         return instance
 
