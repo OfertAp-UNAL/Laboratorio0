@@ -27,9 +27,10 @@ class TownView( APIView ):
             'name': request.data.get('name'),
             'area': request.data.get('area'),
             'budget': request.data.get('budget'),
+            'governor': request.data.get('governor'),
         }
 
-        serializer = TownSerializer( data = data )
+        serializer = TownSetSerializer( data = data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_201_CREATED )
@@ -56,8 +57,10 @@ class TownView( APIView ):
             'name': request.data.get('name'),
             'area': request.data.get('area'),
             'budget': request.data.get('budget'),
+            'governor': request.data.get('governor'),
         }
-        serializer = TownSerializer( town, data=data )
+        
+        serializer = TownSetSerializer( town, data=data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
@@ -71,7 +74,7 @@ class TownView( APIView ):
         except Town.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        serializer = BaseTownSerializer( person, data = request.data, partial=True )
+        serializer = TownSetSerializer( person, data = request.data, partial=True )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
@@ -114,7 +117,7 @@ class HouseView( APIView ):
             'owners' : request.data.get('owners')
         }
 
-        serializer = HouseOwnersSerializer( data = data )
+        serializer = HouseSetSerializer( data = data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_201_CREATED )
@@ -145,9 +148,10 @@ class HouseView( APIView ):
             'capacity': request.data.get('capacity'),
             'levels': request.data.get('levels'),
             'town': request.data.get('town'),
+            'owners' : request.data.get('owners')
         }
 
-        serializer = BaseHouseSerializer( house, data=data )
+        serializer = HouseSetSerializer( house, data=data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
@@ -161,7 +165,7 @@ class HouseView( APIView ):
         except House.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        serializer = HouseOwnersSerializer( person, data = request.data, partial=True )
+        serializer = HouseSetSerializer( person, data = request.data, partial=True )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
@@ -230,7 +234,7 @@ class PersonView( APIView ):
             'depends_on': request.data.get('depends_on')
         }
 
-        serializer = PersonHousesSerializer( data = data )
+        serializer = PersonSetSerializer( data = data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_201_CREATED )
@@ -264,7 +268,7 @@ class PersonView( APIView ):
             'depends_on': request.data.get('depends_on'),
             'houses': request.data.get('houses')
         }
-        serializer = PersonHousesSerializer( person, data=data )
+        serializer = PersonSetSerializer( person, data=data )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
@@ -278,7 +282,7 @@ class PersonView( APIView ):
         except Person.DoesNotExist:
             return Response( status=status.HTTP_404_NOT_FOUND )
         
-        serializer = BasePersonSerializer( person, data = request.data, partial=True )
+        serializer = PersonSetSerializer( person, data = request.data, partial=True )
         if serializer.is_valid():
             serializer.save()
             return Response( serializer.data, status=status.HTTP_200_OK )
