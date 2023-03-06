@@ -104,6 +104,9 @@ class TownSetSerializer( serializers.ModelSerializer ):
 
         # Reassign array of houses (old ones will remain around here)
         town.houses.set( houses_objs )
+
+        town.save()
+        
         return town
 
     def update( self, instance, validated_data ):
